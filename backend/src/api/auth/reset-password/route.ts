@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "../../../lib/next-compat";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { recordAuditLog } from "@/lib/audit";

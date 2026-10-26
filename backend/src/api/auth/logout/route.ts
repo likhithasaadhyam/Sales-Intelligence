@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "../../../lib/next-compat";
 import { cookies } from "@/lib/next-compat";
 
 export async function POST() {
