@@ -12,6 +12,8 @@ import {
   Filter,
   Search,
   MessageSquare,
+  X,
+  RotateCcw,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,14 +22,48 @@ import { Dialog } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/select";
 import { formatINR } from "@/lib/financials";
 import { formatISTDateOnly, formatIST } from "@/lib/date-utils";
+import { useSearch } from "@/lib/search-context";
 
 export default function DailyReportsListingPage() {
   const [reports, setReports] = React.useState<any[]>([]);
   const [currentUser, setCurrentUser] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
+  const { searchQuery, setSearchQuery } = useSearch();
 
   // Filters
   const [statusFilter, setStatusFilter] = React.useState("ALL");
+
+  // Derived filtered reports: filters by status and case-insensitive search (name, date, status, notes)
+  const filteredReports = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return reports.filter((report) => {
+      // 1. Status Filter
+      if (statusFilter !== "ALL" && report.status !== statusFilter) {
+        return false;
+      }
+
+      // 2. Search Query (Sales Executive name, date, status, notes)
+      if (!q) return true;
+
+      const employeeName = (report.employee?.name || "").toLowerCase();
+      const employeeEmail = (report.employee?.email || "").toLowerCase();
+      const statusText = (report.status || "").toLowerCase();
+      const dateFormatted = formatISTDateOnly(report.reportingDate).toLowerCase();
+      const rawDate = new Date(report.reportingDate).toISOString().toLowerCase();
+      const activities = (report.mainActivities || "").toLowerCase();
+      const conversations = (report.clientConversations || "").toLowerCase();
+
+      return (
+        employeeName.includes(q) ||
+        employeeEmail.includes(q) ||
+        statusText.includes(q) ||
+        dateFormatted.includes(q) ||
+        rawDate.includes(q) ||
+        activities.includes(q) ||
+        conversations.includes(q)
+      );
+    });
+  }, [reports, searchQuery, statusFilter]);
 
   // View / Review Dialog State
   const [selectedReport, setSelectedReport] = React.useState<any>(null);
@@ -112,27 +148,69 @@ export default function DailyReportsListingPage() {
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Filter & Search Bar */}
       <Card>
-        <CardContent className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-slate-500">Filter Status:</span>
-            <Select
-              className="w-48"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="ALL">All Reports</option>
-              <option value="SUBMITTED">Submitted (Pending Review)</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="DRAFT">Draft</option>
-            </Select>
+        <CardContent className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by executive name (e.g. Rushika), remarks, date..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 pl-9 pr-8 rounded-lg text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-sky-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  title="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Status Dropdown */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">Status:</span>
+              <Select
+                className="w-44"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="ALL">All Statuses</option>
+                <option value="SUBMITTED">Submitted (Pending Review)</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="DRAFT">Draft</option>
+              </Select>
+            </div>
+
+            {/* Reset button if any filter active */}
+            {(searchQuery.trim() || statusFilter !== "ALL") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearchQuery("");
+                  setStatusFilter("ALL");
+                }}
+                className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                title="Reset all filters"
+              >
+                <RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
+              </Button>
+            )}
           </div>
 
-          <span className="text-xs text-slate-400">
-            Total Reports: <strong>{reports.length}</strong>
-          </span>
+          <div className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            Showing <strong className="text-slate-800 dark:text-slate-200">{filteredReports.length}</strong> of{" "}
+            <strong>{reports.length}</strong> reports
+          </div>
         </CardContent>
       </Card>
 
@@ -158,14 +236,40 @@ export default function DailyReportsListingPage() {
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-400">Loading daily work reports...</td>
                 </tr>
-              ) : reports.length === 0 ? (
+              ) : filteredReports.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-400">
-                    No daily reports found. Click Submit Daily Report to file one.
+                  <td colSpan={9} className="py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2 max-w-sm mx-auto">
+                      <FileSpreadsheet className="w-10 h-10 text-slate-300 dark:text-slate-600" />
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        No reports found
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {searchQuery.trim()
+                          ? `No daily work reports match your search "${searchQuery.trim()}". Check the spelling or clear the search query.`
+                          : statusFilter !== "ALL"
+                          ? `No daily work reports found with status "${statusFilter}".`
+                          : "No daily work reports found. Click Submit Daily Report to file one."}
+                      </p>
+                      {(searchQuery.trim() || statusFilter !== "ALL") && (
+                        <div className="flex items-center gap-2 mt-2">
+                          {searchQuery.trim() && (
+                            <Button variant="outline" size="sm" onClick={() => setSearchQuery("")}>
+                              Clear Search
+                            </Button>
+                          )}
+                          {statusFilter !== "ALL" && (
+                            <Button variant="outline" size="sm" onClick={() => setStatusFilter("ALL")}>
+                              Reset Status Filter
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ) : (
-                reports.map((report) => (
+                filteredReports.map((report) => (
                   <tr key={report.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50">
                     <td className="py-3 px-4 font-semibold text-slate-900 dark:text-slate-100">
                       {formatISTDateOnly(report.reportingDate)}

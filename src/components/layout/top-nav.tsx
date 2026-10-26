@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Menu,
   Search,
@@ -14,8 +14,10 @@ import {
   Clock,
   Sparkles,
   ExternalLink,
+  X,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useSearch } from "@/lib/search-context";
 
 interface TopNavProps {
   userName?: string;
@@ -33,15 +35,31 @@ export function TopNav({
   onSwitchUser,
 }: TopNavProps) {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const pathname = usePathname();
+  const { searchQuery, setSearchQuery } = useSearch();
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showRoleSwitcher, setShowRoleSwitcher] = React.useState(false);
   const [unreadNotifications, setUnreadNotifications] = React.useState<number>(1);
 
+  const isReportsPage = pathname === "/reports/daily";
+  const searchPlaceholder = isReportsPage
+    ? "Filter daily reports by executive (e.g. Rushika), date..."
+    : "Search leads, clients, reports, sales...";
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/crm/leads?search=${encodeURIComponent(searchQuery.trim())}`);
+    const q = searchQuery.trim();
+    if (!q) return;
+
+    if (pathname === "/reports/daily") {
+      // Dynamic on-page filtering happens automatically via onChange state
+      return;
+    }
+
+    if (q.toLowerCase().includes("report") || pathname.startsWith("/reports")) {
+      router.push(`/reports/daily?search=${encodeURIComponent(q)}`);
+    } else {
+      router.push(`/crm/leads?search=${encodeURIComponent(q)}`);
     }
   };
 
@@ -70,11 +88,21 @@ export function TopNav({
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Search leads, clients, sales..."
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 rounded-lg text-xs bg-slate-100 dark:bg-slate-800/80 border border-transparent focus:border-sky-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 transition-all"
+            className="w-full h-9 pl-9 pr-8 rounded-lg text-xs bg-slate-100 dark:bg-slate-800/80 border border-transparent focus:border-sky-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 transition-all"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              title="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </form>
       </div>
 

@@ -16,6 +16,7 @@ export async function GET(req: Request) {
     const employeeId = searchParams.get("employeeId");
     const status = searchParams.get("status");
     const date = searchParams.get("date");
+    const search = searchParams.get("search")?.trim();
 
     let whereClause: any = {};
 
@@ -30,6 +31,15 @@ export async function GET(req: Request) {
       const d = new Date(date);
       d.setHours(0, 0, 0, 0);
       whereClause.reportingDate = d;
+    }
+
+    if (search) {
+      whereClause.OR = [
+        { employee: { name: { contains: search } } },
+        { employee: { email: { contains: search } } },
+        { mainActivities: { contains: search } },
+        { clientConversations: { contains: search } },
+      ];
     }
 
     const reports = await prisma.dailyWorkReport.findMany({

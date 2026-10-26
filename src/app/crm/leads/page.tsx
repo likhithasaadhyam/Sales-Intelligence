@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { formatINR } from "@/lib/financials";
 import { formatISTDateOnly } from "@/lib/date-utils";
+import { useSearch } from "@/lib/search-context";
 
 export default function LeadManagementPage() {
   const [leads, setLeads] = React.useState<any[]>([]);
@@ -32,7 +33,7 @@ export default function LeadManagementPage() {
   const [loading, setLoading] = React.useState(true);
 
   // Filters
-  const [search, setSearch] = React.useState("");
+  const { searchQuery: search, setSearchQuery: setSearch } = useSearch();
   const [statusFilter, setStatusFilter] = React.useState("ALL");
   const [tempFilter, setTempFilter] = React.useState("ALL");
   const [sourceFilter, setSourceFilter] = React.useState("ALL");

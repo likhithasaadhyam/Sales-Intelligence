@@ -646,6 +646,46 @@ async function main() {
     },
   });
 
+  // Rushika's Submitted Report (Today)
+  await prisma.dailyWorkReport.create({
+    data: {
+      employeeId: executiveUsers[2].id, // Rushika
+      reportingDate: todayDate,
+      status: "SUBMITTED",
+      callsMade: 45,
+      connectedCalls: 32,
+      unansweredCalls: 13,
+      interestedProspects: 7,
+      followUpCalls: 14,
+      whatsappFollowups: 22,
+      meetingsScheduled: 2,
+      newLeadsReceived: 5,
+      newLeadsAdded: 3,
+      leadsContacted: 18,
+      qualifiedLeads: 4,
+      hotLeads: 3,
+      warmLeads: 4,
+      coldLeads: 2,
+      followupsCompleted: 14,
+      proposalsSent: 2,
+      meetingsCompleted: 2,
+      negotiationsInProgress: 1,
+      dealsClosed: 1,
+      newClientsAcquired: 1,
+      packageSold: "Mentneo Starter Growth",
+      dealValuePaise: 2500000n,
+      revenueGeneratedPaise: 2500000n,
+      amountCollectedPaise: 2500000n,
+      amountGatewayPaise: 2500000n,
+      pendingAmountPaise: 0n,
+      mainActivities: "Conducted onboarding and product walkthrough for Zenith EdTech. Closed ₹25,000 starter package.",
+      clientConversations: "Zenith EdTech confirmed payment via gateway, asked for additional team login credentials.",
+      challengesFaced: "Client onboarding scheduling delayed due to customer team availability.",
+      tomorrowPlan: "Follow up with 6 hot leads in education sector and schedule demos.",
+      submittedAt: new Date(),
+    },
+  });
+
   // Notifications
   await prisma.notification.create({
     data: {
