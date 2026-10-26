@@ -6,14 +6,45 @@ Production-ready enterprise sales operations and revenue intelligence platform f
 
 ## 🌟 Architecture & Technical Stack
 
-- **Framework:** Next.js 14 (App Router) + React 18 + TypeScript (ES2022)
+- **Architecture:** Decoupled Monorepo (`backend/` + `frontend/`)
+  - **Backend API (`backend/`):** Node.js + Express API server, Prisma ORM, SQLite/PostgreSQL database, RBAC middleware, integer-precision finance, and audit logging. Runs on port `5000`.
+  - **Frontend Client (`frontend/`):** Next.js 14 (App Router) + React 18 + Tailwind CSS + Lucide Icons + Recharts + SheetJS. Next.js proxies API requests to backend on port `5000`. Runs on port `3000`.
 - **Styling:** Tailwind CSS + Enterprise Design System (Deep Navy `#0b1329`, White/Light Gray Surfaces, Teal `#0d9488` & Blue Accents, Persistent Light/Dark theme)
 - **Database & ORM:** Prisma ORM with 20 fully related models
-  - **Local Development:** SQLite (`file:./dev.db`) for rapid local iteration, relational integrity, foreign keys, and zero-daemon friction.
+  - **Local Development:** SQLite (`backend/prisma/dev.db`) for rapid local iteration, relational integrity, foreign keys, and zero-daemon friction.
   - **Production Deployment:** PostgreSQL via standard `DATABASE_URL` connection string.
 - **Financial Precision Standard:** All monetary values are strictly stored and calculated as **integer paise** (`1 INR = 100 paise`). Floating-point arithmetic is strictly prohibited to prevent financial rounding drift.
 - **Analytics & Charting:** Recharts for interactive analytics, funnels, revenue trends, and employee comparisons.
 - **Exports:** CSV exports, Excel (`.xlsx`) via SheetJS, and printable / PDF formatted reporting.
+
+---
+
+## 🚀 Running the Project
+
+### 1. Run Both Frontend and Backend Concurrently (Recommended)
+```bash
+npm run dev
+```
+- **Backend API:** [http://localhost:5000](http://localhost:5000) (Health check: `/api/health`)
+- **Frontend App:** [http://localhost:3000](http://localhost:3000)
+
+### 2. Run Independently
+```bash
+# Start Backend Only (Port 5000)
+npm run dev:backend
+
+# Start Frontend Only (Port 3000)
+npm run dev:frontend
+```
+
+### 3. Build & Test
+```bash
+# Build both services
+npm run build
+
+# Run automated test suite
+npm test
+```
 
 ---
 
