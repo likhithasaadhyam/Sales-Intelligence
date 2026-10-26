@@ -39,6 +39,7 @@ model User {
   performedTransfers  LeadAssignment[]      @relation("TransferActor")
   reportApprovals     ReportApproval[]
   processedRefunds    Refund[]
+  assignedClients     Client[]              @relation("ClientAssignee")
 }
 
 // 2. roles
@@ -138,6 +139,7 @@ model Lead {
   meetings              Meeting[]
   sales                 Sale[]
   assignments           LeadAssignment[]
+  convertedClient       Client?           @relation("LeadClientConversion")
 }
 
 // 7. lead_assignments
@@ -159,8 +161,10 @@ model LeadAssignment {
 model CallLog {
   id               String    @id @default(uuid())
   callNumber       String    @unique
-  leadId           String
-  lead             Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId           String?
+  lead             Lead?     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  clientId         String?
+  client           Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   employeeId       String
   employee         User      @relation(fields: [employeeId], references: [id])
   callDateTime     DateTime  @default(now())
@@ -177,8 +181,10 @@ model CallLog {
 // 9. follow_ups
 model FollowUp {
   id           String    @id @default(uuid())
-  leadId       String
-  lead         Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId       String?
+  lead         Lead?     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  clientId     String?
+  client       Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   employeeId   String
   employee     User      @relation(fields: [employeeId], references: [id])
   scheduledAt  DateTime
@@ -193,8 +199,10 @@ model FollowUp {
 // 10. meetings
 model Meeting {
   id          String    @id @default(uuid())
-  leadId      String
-  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId      String?
+  lead        Lead?     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   employeeId  String
   employee    User      @relation(fields: [employeeId], references: [id])
   title       String
@@ -234,21 +242,33 @@ model Sale {
 
 // 12. clients
 model Client {
-  id            String    @id @default(uuid())
-  clientNumber  String    @unique
-  businessName  String
-  contactPerson String
-  phone         String
-  email         String?
-  city          String?
-  state         String?
-  address       String?
-  gstNumber     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(uuid())
+  clientNumber     String    @unique
+  businessName     String
+  contactPerson    String
+  phone            String
+  email            String?
+  businessCategory String?
+  website          String?
+  city             String?
+  state            String?
+  postalCode       String?
+  address          String?
+  gstNumber        String?
+  status           String    @default("ACTIVE") // ACTIVE, ONBOARDING, AT_RISK, CHURNED, INACTIVE
+  assignedToId     String?
+  assignedTo       User?     @relation("ClientAssignee", fields: [assignedToId], references: [id])
+  originalLeadId   String?   @unique
+  originalLead     Lead?     @relation("LeadClientConversion", fields: [originalLeadId], references: [id])
+  notes            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  sales         Sale[]
-  payments      PaymentTransaction[]
+  sales            Sale[]
+  payments         PaymentTransaction[]
+  calls            CallLog[]
+  followUps        FollowUp[]
+  meetings         Meeting[]
 }
 
 // 13. packages

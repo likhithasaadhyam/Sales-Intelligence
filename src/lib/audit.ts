@@ -3,7 +3,7 @@ import { prisma } from "./prisma";
 export interface AuditLogOptions {
   actorId?: string | null;
   action: "CREATE" | "UPDATE" | "DELETE" | "VERIFY" | "REJECT" | "TRANSFER" | "APPROVE" | "LOGIN";
-  entityType: "USER" | "LEAD" | "SALE" | "PAYMENT" | "TARGET" | "REPORT" | "PACKAGE" | "SETTING" | "TEAM";
+  entityType: "USER" | "LEAD" | "SALE" | "PAYMENT" | "TARGET" | "REPORT" | "PACKAGE" | "SETTING" | "TEAM" | "CLIENT";
   entityId?: string;
   details?: Record<string, unknown> | string;
   ipAddress?: string;

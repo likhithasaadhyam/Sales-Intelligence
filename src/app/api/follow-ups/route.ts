@@ -50,6 +50,15 @@ export async function GET(req: Request) {
             status: true,
           },
         },
+        client: {
+          select: {
+            id: true,
+            clientNumber: true,
+            businessName: true,
+            contactPerson: true,
+            phone: true,
+          },
+        },
         employee: { select: { id: true, name: true } },
       },
       orderBy: { scheduledAt: "asc" },

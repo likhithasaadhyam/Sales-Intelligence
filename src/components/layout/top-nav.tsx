@@ -137,7 +137,7 @@ export function TopNav({
           category: "clients",
           title: c.businessName,
           subtitle: `${c.contactPerson} • ${c.phone}${c.city ? ` • ${c.city}` : ""}`,
-          url: `/crm/clients`,
+          url: `/crm/clients/${c.id}`,
           badge: c.clientNumber,
         });
       });

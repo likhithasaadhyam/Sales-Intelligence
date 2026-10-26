@@ -35,8 +35,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     await recordAuditLog({
       actorId: session.id,
       action: "UPDATE",
-      entityType: "LEAD",
-      entityId: followUp.leadId,
+      entityType: followUp.leadId ? "LEAD" : "CLIENT",
+      entityId: followUp.leadId || followUp.clientId || undefined,
       details: { action: "FOLLOWUP_COMPLETED", followUpId: id, status, outcome },
     });
 

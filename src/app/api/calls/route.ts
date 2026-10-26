@@ -33,6 +33,9 @@ export async function GET(req: Request) {
         lead: {
           select: { id: true, leadNumber: true, businessName: true, contactPerson: true, phone: true },
         },
+        client: {
+          select: { id: true, clientNumber: true, businessName: true, contactPerson: true, phone: true },
+        },
         employee: { select: { id: true, name: true, email: true } },
       },
       orderBy: { callDateTime: "desc" },

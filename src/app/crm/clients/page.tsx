@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Briefcase,
   Search,
@@ -22,6 +23,7 @@ import { formatINR } from "@/lib/financials";
 import { formatISTDateOnly } from "@/lib/date-utils";
 
 export default function ClientManagementPage() {
+  const router = useRouter();
   const [clients, setClients] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState("");
@@ -197,13 +199,23 @@ export default function ClientManagementPage() {
                 </tr>
               ) : (
                 clients.map((client) => (
-                  <tr key={client.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/50">
-                    <td className="py-3 px-4 font-mono font-semibold text-slate-800 dark:text-slate-200">
+                  <tr
+                    key={client.id}
+                    onClick={() => router.push(`/crm/clients/${client.id}`)}
+                    className="cursor-pointer hover:bg-sky-50/60 dark:hover:bg-sky-950/20 transition-colors group"
+                  >
+                    <td className="py-3 px-4 font-mono font-semibold text-sky-600 dark:text-sky-400 group-hover:underline">
                       {client.clientNumber}
                     </td>
 
-                    <td className="py-3 px-3 font-semibold text-slate-900 dark:text-slate-100">
-                      {client.businessName}
+                    <td className="py-3 px-3 font-semibold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                      <Link
+                        href={`/crm/clients/${client.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="hover:underline flex items-center gap-1.5"
+                      >
+                        {client.businessName}
+                      </Link>
                     </td>
 
                     <td className="py-3 px-3 text-slate-600 dark:text-slate-400">

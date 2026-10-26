@@ -191,7 +191,10 @@ export async function GET(req: Request) {
         where: { employeeId: targetUserId },
         orderBy: { callDateTime: "desc" },
         take: 5,
-        include: { lead: { select: { businessName: true, contactPerson: true } } },
+        include: {
+          lead: { select: { businessName: true, contactPerson: true } },
+          client: { select: { businessName: true } },
+        },
       }),
       prisma.sale.findMany({
         where: { employeeId: targetUserId },
@@ -203,7 +206,10 @@ export async function GET(req: Request) {
         where: { employeeId: targetUserId },
         orderBy: { scheduledAt: "desc" },
         take: 5,
-        include: { lead: { select: { businessName: true } } },
+        include: {
+          lead: { select: { businessName: true } },
+          client: { select: { businessName: true } },
+        },
       }),
       prisma.dailyWorkReport.findMany({
         where: { employeeId: targetUserId },
@@ -219,7 +225,7 @@ export async function GET(req: Request) {
         id: `call-${c.id}`,
         type: "CALL",
         title: `Logged ${c.callStatus.replace(/_/g, " ")} Call (${Math.round(c.durationSeconds / 60)} mins)`,
-        description: `Prospect: ${c.lead.businessName} (${c.outcome})`,
+        description: `Prospect: ${c.lead?.businessName || c.client?.businessName || "Client"} (${c.outcome})`,
         date: c.callDateTime,
       });
     });
@@ -239,7 +245,7 @@ export async function GET(req: Request) {
         id: `fu-${f.id}`,
         type: "FOLLOW_UP",
         title: `Follow-up ${f.status.replace(/_/g, " ")}`,
-        description: `With ${f.lead.businessName}: ${f.notes || "Follow-up schedule"}`,
+        description: `With ${f.lead?.businessName || f.client?.businessName || "Client"}: ${f.notes || "Follow-up schedule"}`,
         date: f.scheduledAt,
       });
     });
