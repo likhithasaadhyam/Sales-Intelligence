@@ -62,28 +62,6 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
   };
 
-  const handleSwitchUser = async (email: string) => {
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: "Password123!" }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        if (data.user.role === "SALES_EXECUTIVE") {
-          router.push("/dashboard");
-        } else {
-          router.push("/admin/overview");
-        }
-        router.refresh();
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   if (isAuthPage) {
     return <main className="min-h-screen bg-slate-900">{children}</main>;
   }
@@ -129,7 +107,6 @@ export function AppLayout({ children }: AppLayoutProps) {
             userRole={role}
             onOpenMobile={() => setMobileOpen(true)}
             onLogout={handleLogout}
-            onSwitchUser={handleSwitchUser}
           />
 
           <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto">

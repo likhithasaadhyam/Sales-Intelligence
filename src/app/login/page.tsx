@@ -3,13 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = React.useState("admin@mentneo.com");
-  const [password, setPassword] = React.useState("Password123!");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -45,13 +45,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
-  const quickLogins = [
-    { label: "Super Admin", email: "admin@mentneo.com", role: "Full Access" },
-    { label: "Sales Manager", email: "manager@mentneo.com", role: "Team Oversight" },
-    { label: "Teja (Executive)", email: "teja@mentneo.com", role: "Executive View" },
-    { label: "Narendra (Executive)", email: "narendra@mentneo.com", role: "Executive View" },
-  ];
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#070b19] px-4 py-12 relative overflow-hidden">
@@ -140,36 +133,6 @@ export default function LoginPage() {
               Sign In to Platform <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </form>
-
-          {/* Demo Quick Logins */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-sky-400" /> Demo Quick Switch
-              </span>
-              <span className="text-[10px] text-slate-500">Auto-fills credentials</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {quickLogins.map((ql) => (
-                <button
-                  key={ql.email}
-                  type="button"
-                  onClick={() => {
-                    setEmail(ql.email);
-                    setPassword("Password123!");
-                  }}
-                  className={`p-2 rounded-lg text-left text-xs border transition-all ${
-                    email === ql.email
-                      ? "bg-sky-950/50 border-sky-600/60 text-sky-300"
-                      : "bg-slate-950/40 border-slate-800/70 text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
-                  }`}
-                >
-                  <p className="font-medium truncate">{ql.label}</p>
-                  <p className="text-[10px] text-slate-500">{ql.role}</p>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Security Footer */}
