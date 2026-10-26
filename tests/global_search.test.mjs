@@ -123,10 +123,10 @@ async function executeGlobalSearch(q, session) {
     prisma.user.findMany({
       where: {
         OR: [
-          { name: { contains: trimmed } },
-          { email: { contains: trimmed } },
-          { profile: { employeeCode: { contains: trimmed } } },
-          { profile: { territory: { contains: trimmed } } },
+          { name: { contains: trimmed, mode: "insensitive" } },
+          { email: { contains: trimmed, mode: "insensitive" } },
+          { profile: { employeeCode: { contains: trimmed, mode: "insensitive" } } },
+          { profile: { territory: { contains: trimmed, mode: "insensitive" } } },
         ],
       },
       take: limit,

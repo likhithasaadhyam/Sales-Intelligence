@@ -40,12 +40,12 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { assignedToId: session.id } : {}),
           OR: [
-            { businessName: { contains: q } },
-            { contactPerson: { contains: q } },
-            { phone: { contains: q } },
-            { email: { contains: q } },
-            { leadNumber: { contains: q } },
-            { packageInterested: { contains: q } },
+            { businessName: { contains: q, mode: "insensitive" } },
+            { contactPerson: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+            { leadNumber: { contains: q, mode: "insensitive" } },
+            { packageInterested: { contains: q, mode: "insensitive" } },
           ],
         },
         take: limit,
@@ -65,12 +65,12 @@ export async function GET(req: Request) {
       prisma.client.findMany({
         where: {
           OR: [
-            { businessName: { contains: q } },
-            { contactPerson: { contains: q } },
-            { phone: { contains: q } },
-            { email: { contains: q } },
-            { clientNumber: { contains: q } },
-            { city: { contains: q } },
+            { businessName: { contains: q, mode: "insensitive" } },
+            { contactPerson: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+            { clientNumber: { contains: q, mode: "insensitive" } },
+            { city: { contains: q, mode: "insensitive" } },
           ],
         },
         take: limit,
@@ -90,10 +90,10 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { employeeId: session.id } : {}),
           OR: [
-            { saleNumber: { contains: q } },
-            { packageName: { contains: q } },
-            { invoiceNumber: { contains: q } },
-            { client: { businessName: { contains: q } } },
+            { saleNumber: { contains: q, mode: "insensitive" } },
+            { packageName: { contains: q, mode: "insensitive" } },
+            { invoiceNumber: { contains: q, mode: "insensitive" } },
+            { client: { businessName: { contains: q, mode: "insensitive" } } },
           ],
         },
         take: limit,
@@ -115,10 +115,10 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { employeeId: session.id } : {}),
           OR: [
-            { employee: { name: { contains: q } } },
-            { mainActivities: { contains: q } },
-            { packageSold: { contains: q } },
-            { status: { contains: q } },
+            { employee: { name: { contains: q, mode: "insensitive" } } },
+            { mainActivities: { contains: q, mode: "insensitive" } },
+            { packageSold: { contains: q, mode: "insensitive" } },
+            { status: { contains: q, mode: "insensitive" } },
           ],
         },
         take: limit,
@@ -138,10 +138,10 @@ export async function GET(req: Request) {
       prisma.user.findMany({
         where: {
           OR: [
-            { name: { contains: q } },
-            { email: { contains: q } },
-            { profile: { employeeCode: { contains: q } } },
-            { profile: { territory: { contains: q } } },
+            { name: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+            { profile: { employeeCode: { contains: q, mode: "insensitive" } } },
+            { profile: { territory: { contains: q, mode: "insensitive" } } },
           ],
         },
         take: limit,
@@ -165,11 +165,11 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { employeeId: session.id } : {}),
           OR: [
-            { callNumber: { contains: q } },
-            { outcome: { contains: q } },
-            { notes: { contains: q } },
-            { lead: { businessName: { contains: q } } },
-            { lead: { contactPerson: { contains: q } } },
+            { callNumber: { contains: q, mode: "insensitive" } },
+            { outcome: { contains: q, mode: "insensitive" } },
+            { notes: { contains: q, mode: "insensitive" } },
+            { lead: { businessName: { contains: q, mode: "insensitive" } } },
+            { lead: { contactPerson: { contains: q, mode: "insensitive" } } },
           ],
         },
         take: limit,
@@ -190,9 +190,9 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { employeeId: session.id } : {}),
           OR: [
-            { notes: { contains: q } },
-            { status: { contains: q } },
-            { lead: { businessName: { contains: q } } },
+            { notes: { contains: q, mode: "insensitive" } },
+            { status: { contains: q, mode: "insensitive" } },
+            { lead: { businessName: { contains: q, mode: "insensitive" } } },
           ],
         },
         take: limit,
@@ -212,10 +212,10 @@ export async function GET(req: Request) {
         where: {
           ...(isExecutive ? { recordedById: session.id } : {}),
           OR: [
-            { transactionNumber: { contains: q } },
-            { transactionReference: { contains: q } },
-            { paymentMethod: { contains: q } },
-            { client: { businessName: { contains: q } } },
+            { transactionNumber: { contains: q, mode: "insensitive" } },
+            { transactionReference: { contains: q, mode: "insensitive" } },
+            { paymentMethod: { contains: q, mode: "insensitive" } },
+            { client: { businessName: { contains: q, mode: "insensitive" } } },
           ],
         },
         take: limit,
