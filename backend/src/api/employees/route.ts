@@ -1,8 +1,8 @@
 import { NextResponse } from "../../lib/next-compat";
-import { getSession, requireRole, hashPassword } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
-import { calculateAchievementPercentage } from "@/lib/financials";
+import { getSession, requireRole, hashPassword } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
+import { calculateAchievementPercentage } from "../../lib/financials";
 
 export async function GET(req: Request) {
   try {

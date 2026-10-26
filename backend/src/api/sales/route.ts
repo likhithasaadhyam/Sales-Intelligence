@@ -1,9 +1,9 @@
 import { NextResponse } from "../../lib/next-compat";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
-import { rupeesToPaise, calculateNetCollections, calculateOutstanding } from "@/lib/financials";
-import { getDateRangeFilter, DateRangePreset } from "@/lib/date-utils";
+import { getSession } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
+import { rupeesToPaise, calculateNetCollections, calculateOutstanding } from "../../lib/financials";
+import { getDateRangeFilter, DateRangePreset } from "../../lib/date-utils";
 
 export async function GET(req: Request) {
   try {

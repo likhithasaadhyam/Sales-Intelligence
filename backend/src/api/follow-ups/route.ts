@@ -1,7 +1,7 @@
 import { NextResponse } from "../../lib/next-compat";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
+import { getSession } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
 
 export async function GET(req: Request) {
   try {

@@ -1,6 +1,6 @@
 import { NextResponse } from "../../lib/next-compat";
-import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { requireRole } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
 
 export async function GET(req: Request) {
   try {

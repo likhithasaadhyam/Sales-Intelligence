@@ -1,8 +1,8 @@
 import { NextResponse } from "../../../lib/next-compat";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { getDateRangeFilter, DateRangePreset, formatISTDateOnly } from "@/lib/date-utils";
-import { calculateAchievementPercentage, calculateOutstanding, calculateNetCollections } from "@/lib/financials";
+import { getSession } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
+import { getDateRangeFilter, DateRangePreset, formatISTDateOnly } from "../../../lib/date-utils";
+import { calculateAchievementPercentage, calculateOutstanding, calculateNetCollections } from "../../../lib/financials";
 
 export async function GET(req: Request) {
   try {

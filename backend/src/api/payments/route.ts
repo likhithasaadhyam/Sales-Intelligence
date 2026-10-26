@@ -1,9 +1,9 @@
 import { NextResponse } from "../../lib/next-compat";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
-import { rupeesToPaise } from "@/lib/financials";
-import { notifyAdmins } from "@/lib/notifications";
+import { getSession } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
+import { rupeesToPaise } from "../../lib/financials";
+import { notifyAdmins } from "../../lib/notifications";
 
 export async function GET(req: Request) {
   try {

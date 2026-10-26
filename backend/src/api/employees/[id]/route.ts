@@ -1,7 +1,7 @@
 import { NextResponse } from "../../../lib/next-compat";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { calculateAchievementPercentage } from "@/lib/financials";
+import { getSession } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
+import { calculateAchievementPercentage } from "../../../lib/financials";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {

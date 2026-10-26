@@ -1,7 +1,7 @@
 import { NextResponse } from "../../lib/next-compat";
-import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
+import { requireRole } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
 
 export async function GET() {
   try {

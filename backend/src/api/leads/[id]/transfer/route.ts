@@ -1,8 +1,8 @@
 import { NextResponse } from "../../../../lib/next-compat";
-import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
-import { createNotification } from "@/lib/notifications";
+import { requireRole } from "../../../../lib/auth";
+import { prisma } from "../../../../lib/prisma";
+import { recordAuditLog } from "../../../../lib/audit";
+import { createNotification } from "../../../../lib/notifications";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {

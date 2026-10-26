@@ -1,8 +1,8 @@
 import { NextResponse } from "../../lib/next-compat";
-import { getSession, requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { recordAuditLog } from "@/lib/audit";
-import { rupeesToPaise } from "@/lib/financials";
+import { getSession, requireRole } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { recordAuditLog } from "../../lib/audit";
+import { rupeesToPaise } from "../../lib/financials";
 
 export async function GET() {
   try {

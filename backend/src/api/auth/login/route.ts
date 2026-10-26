@@ -1,8 +1,8 @@
 import { NextResponse } from "../../../lib/next-compat";
-import { cookies } from "@/lib/next-compat";
-import { prisma } from "@/lib/prisma";
-import { verifyPassword, signToken } from "@/lib/auth";
-import { recordAuditLog } from "@/lib/audit";
+import { cookies } from "../../../lib/next-compat";
+import { prisma } from "../../../lib/prisma";
+import { verifyPassword, signToken } from "../../../lib/auth";
+import { recordAuditLog } from "../../../lib/audit";
 
 export async function POST(req: Request) {
   try {
