@@ -101,12 +101,21 @@ export default function GeneralSettingsPage() {
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
               />
-              <Input
+              <Select
                 label="Currency Symbol"
                 required
                 value={currencySymbol}
                 onChange={(e) => setCurrencySymbol(e.target.value)}
-              />
+                allowCustom
+                customOptionLabel="Custom / Other Currency"
+                customInputLabel="Enter custom currency symbol"
+                customInputPlaceholder="e.g. د.إ, ¥, ₩, AUD..."
+              >
+                <option value="₹">₹ (Indian Rupee - INR)</option>
+                <option value="$">$ (US Dollar - USD)</option>
+                <option value="€">€ (Euro - EUR)</option>
+                <option value="£">£ (British Pound - GBP)</option>
+              </Select>
             </div>
           </CardContent>
         </Card>

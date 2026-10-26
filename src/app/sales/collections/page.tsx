@@ -343,6 +343,10 @@ export default function PaymentCollectionsPage() {
               label="Payment Method"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom payment method"
+              customInputPlaceholder="e.g. Cheque, Demand Draft, Wire Transfer / SWIFT..."
             >
               <option value="UPI">UPI (Google Pay, PhonePe, Paytm)</option>
               <option value="BANK_TRANSFER">Bank Transfer (NEFT / IMPS / RTGS)</option>

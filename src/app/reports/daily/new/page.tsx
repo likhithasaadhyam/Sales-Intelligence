@@ -412,11 +412,25 @@ export default function NewDailyWorkReportPage() {
               onChange={(e) => setNewClientsAcquired(Number(e.target.value))}
             />
             <div className="sm:col-span-2">
-              <Input
+              <Select
                 label="Package Sold Today"
                 value={packageSold}
-                onChange={(e) => setPackageSold(e.target.value)}
-              />
+                onChange={(e) => {
+                  setPackageSold(e.target.value);
+                  if (e.target.value.includes("25,000")) setDealValueRupees(25000);
+                  else if (e.target.value.includes("35,000")) setDealValueRupees(35000);
+                  else if (e.target.value.includes("45,000")) setDealValueRupees(45000);
+                }}
+                allowCustom
+                customOptionLabel="Custom / Other"
+                customInputLabel="Enter custom package name"
+                customInputPlaceholder="e.g. Custom Corporate Onboarding..."
+              >
+                <option value="">None / Not Applicable</option>
+                <option value="Mentneo Starter Growth">Mentneo Starter Growth (₹25,000)</option>
+                <option value="Mentneo Professional Scale">Mentneo Professional Scale (₹35,000)</option>
+                <option value="Mentneo Enterprise Accelerator">Mentneo Enterprise Accelerator (₹45,000)</option>
+              </Select>
             </div>
             <Input
               label="Deal Value (₹)"

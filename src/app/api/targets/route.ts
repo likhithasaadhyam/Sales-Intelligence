@@ -73,7 +73,7 @@ export async function POST(req: Request) {
       data: {
         employeeId: employeeId || null,
         teamId: teamId || null,
-        periodType,
+        periodType: periodType.trim(),
         targetCalls: Number(targetCalls),
         targetLeads: Number(targetLeads),
         targetFollowUps: Number(targetFollowUps),

@@ -465,6 +465,10 @@ export default function LeadManagementPage() {
               label="Lead Source"
               value={source}
               onChange={(e) => setSource(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom lead source"
+              customInputPlaceholder="e.g. Trade Expo, College Seminar, Partner..."
             >
               <option value="INBOUND">Inbound</option>
               <option value="WEBSITE">Website</option>
@@ -478,6 +482,10 @@ export default function LeadManagementPage() {
               label="Package Interested In"
               value={pkgInterested}
               onChange={(e) => setPkgInterested(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom package tier"
+              customInputPlaceholder="e.g. Custom Multi-Year Enterprise..."
             >
               <option value="Mentneo Starter Growth">₹25,000 Starter Growth</option>
               <option value="Mentneo Professional Scale">₹35,000 Professional Scale</option>

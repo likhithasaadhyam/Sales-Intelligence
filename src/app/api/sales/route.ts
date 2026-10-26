@@ -205,7 +205,7 @@ export async function POST(req: Request) {
         leadId: leadId || null,
         clientId: client.id,
         employeeId: session.id,
-        packageName,
+        packageName: packageName.trim(),
         saleDate: new Date(),
         totalContractValuePaise: contractPaise,
         discountPaise,

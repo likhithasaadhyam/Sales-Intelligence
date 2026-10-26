@@ -311,6 +311,10 @@ export default function TargetManagementPage() {
               label="Period Type"
               value={periodType}
               onChange={(e) => setPeriodType(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom period"
+              customInputPlaceholder="e.g. Q4 Festive Campaign, Bi-Weekly Sprint..."
             >
               <option value="DAILY">Daily Target</option>
               <option value="WEEKLY">Weekly Target</option>

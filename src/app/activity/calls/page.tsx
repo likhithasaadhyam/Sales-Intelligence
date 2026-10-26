@@ -359,6 +359,10 @@ export default function CallActivityPage() {
               label="Call Status"
               value={callStatus}
               onChange={(e) => setCallStatus(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom call status"
+              customInputPlaceholder="e.g. Voicemail left, Network disconnect..."
             >
               <option value="CONNECTED">Connected</option>
               <option value="NOT_ANSWERED">Not Answered</option>
@@ -386,6 +390,10 @@ export default function CallActivityPage() {
             label="Call Outcome"
             value={outcome}
             onChange={(e) => setOutcome(e.target.value)}
+            allowCustom
+            customOptionLabel="Custom / Other"
+            customInputLabel="Enter custom call outcome"
+            customInputPlaceholder="e.g. In-person demo requested, Catalog sent..."
           >
             <option value="QUALIFIED">Qualified</option>
             <option value="INTERESTED">Interested</option>

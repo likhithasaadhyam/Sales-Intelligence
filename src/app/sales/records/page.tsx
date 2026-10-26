@@ -457,6 +457,10 @@ export default function SalesRecordsPage() {
               else if (e.target.value.includes("35,000")) setTotalContractValueRupees(35000);
               else if (e.target.value.includes("45,000")) setTotalContractValueRupees(45000);
             }}
+            allowCustom
+            customOptionLabel="Custom / Other"
+            customInputLabel="Enter custom package name"
+            customInputPlaceholder="e.g. Custom Multi-Year Enterprise Cohort..."
           >
             <option value="Mentneo Starter Growth">Mentneo Starter Growth (₹25,000)</option>
             <option value="Mentneo Professional Scale">Mentneo Professional Scale (₹35,000)</option>

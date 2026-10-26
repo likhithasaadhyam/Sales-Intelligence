@@ -33,6 +33,7 @@ export default function FollowUpCalendarPage() {
   // New Followup Modal
   const [showScheduleModal, setShowScheduleModal] = React.useState(false);
   const [newLeadId, setNewLeadId] = React.useState("");
+  const [followUpType, setFollowUpType] = React.useState("PHONE_CALL");
   const [newDate, setNewDate] = React.useState("");
   const [newNotes, setNewNotes] = React.useState("");
 
@@ -93,13 +94,17 @@ export default function FollowUpCalendarPage() {
     if (!newLeadId || !newDate) return;
 
     try {
+      const combinedNotes = newNotes.trim()
+        ? `[${followUpType}] ${newNotes.trim()}`
+        : `[${followUpType}] Scheduled follow-up`;
+
       const res = await fetch("/api/follow-ups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           leadId: newLeadId,
           scheduledAt: newDate,
-          notes: newNotes,
+          notes: combinedNotes,
         }),
       });
 
@@ -375,6 +380,21 @@ export default function FollowUpCalendarPage() {
                 {l.businessName} ({l.contactPerson})
               </option>
             ))}
+          </Select>
+
+          <Select
+            label="Follow-up Type"
+            value={followUpType}
+            onChange={(e) => setFollowUpType(e.target.value)}
+            allowCustom
+            customOptionLabel="Custom / Other"
+            customInputLabel="Enter custom follow-up type"
+            customInputPlaceholder="e.g. In-person site visit, Zoom demo, Contract negotiation..."
+          >
+            <option value="PHONE_CALL">Phone Call</option>
+            <option value="WHATSAPP">WhatsApp Reminder</option>
+            <option value="MEETING">Video / In-Person Meeting</option>
+            <option value="EMAIL">Email Follow-up</option>
           </Select>
 
           <Input

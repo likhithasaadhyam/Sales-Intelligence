@@ -227,11 +227,15 @@ export default function LeadDetailPage() {
           {/* Quick Status Bar */}
           <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-slate-500">Update Lead Stage:</span>
-              <select
+              <span className="text-slate-500 whitespace-nowrap">Update Lead Stage:</span>
+              <Select
                 value={lead.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
-                className="h-8 px-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-medium"
+                allowCustom
+                customOptionLabel="Custom / Other Stage"
+                customInputLabel="Enter custom lead stage"
+                customInputPlaceholder="e.g. Legal review in progress..."
+                className="h-8 py-1 text-xs"
               >
                 <option value="NEW">New</option>
                 <option value="CONTACTED">Contacted</option>
@@ -242,7 +246,7 @@ export default function LeadDetailPage() {
                 <option value="CONVERTED">Converted</option>
                 <option value="LOST">Lost</option>
                 <option value="NOT_INTERESTED">Not Interested</option>
-              </select>
+              </Select>
             </div>
 
             <div className="flex items-center gap-4 text-slate-600 dark:text-slate-400">
@@ -369,6 +373,10 @@ export default function LeadDetailPage() {
               label="Call Status"
               value={callStatus}
               onChange={(e) => setCallStatus(e.target.value)}
+              allowCustom
+              customOptionLabel="Custom / Other"
+              customInputLabel="Enter custom call status"
+              customInputPlaceholder="e.g. Voicemail, Disconnected..."
             >
               <option value="CONNECTED">Connected</option>
               <option value="NOT_ANSWERED">Not Answered</option>
@@ -388,6 +396,10 @@ export default function LeadDetailPage() {
             label="Call Outcome"
             value={callOutcome}
             onChange={(e) => setCallOutcome(e.target.value)}
+            allowCustom
+            customOptionLabel="Custom / Other"
+            customInputLabel="Enter custom call outcome"
+            customInputPlaceholder="e.g. Requested customized pricing, Follow-up in 2 days..."
           >
             <option value="INTERESTED">Interested</option>
             <option value="QUALIFIED">Qualified</option>

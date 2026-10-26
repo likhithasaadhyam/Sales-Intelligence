@@ -216,6 +216,12 @@ export async function POST(req: Request) {
         dealValuePaise: report.dealValuePaise.toString(),
         revenueGeneratedPaise: report.revenueGeneratedPaise.toString(),
         amountCollectedPaise: report.amountCollectedPaise.toString(),
+        amountUpiPaise: report.amountUpiPaise.toString(),
+        amountBankTransferPaise: report.amountBankTransferPaise.toString(),
+        amountCashPaise: report.amountCashPaise.toString(),
+        amountGatewayPaise: report.amountGatewayPaise.toString(),
+        pendingAmountPaise: report.pendingAmountPaise.toString(),
+        refundsPaise: report.refundsPaise.toString(),
       },
     });
   } catch (error) {

@@ -107,7 +107,7 @@ export async function POST(req: Request) {
         clientId: sale.clientId,
         recordedById: session.id,
         amountPaise,
-        paymentMethod,
+        paymentMethod: paymentMethod.trim(),
         transactionReference: transactionReference.trim(),
         paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
         verificationStatus: "PENDING", // Strictly starts as PENDING until verified by admin/manager!
