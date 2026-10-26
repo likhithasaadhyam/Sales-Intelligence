@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "prisma generate --schema=prisma/schema.prisma",
+  "buildCommand": "npx prisma generate --schema=prisma/schema.prisma",
   "rewrites": [
     {
       "source": "/(.*)",
