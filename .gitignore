@@ -21,6 +21,8 @@ backend/dist/
 # misc
 .DS_Store
 *.pem
+.vercel
+**/.vercel/
 
 # debug
 npm-debug.log*

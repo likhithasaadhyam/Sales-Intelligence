@@ -40,6 +40,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.get("/api/health", (_req, res) => {
   res.json({ status: "healthy", service: "mentneo-backend-api", timestamp: new Date().toISOString() });
 });
+app.get("/", (_req, res) => {
+  res.json({ status: "healthy", service: "mentneo-backend-api", timestamp: new Date().toISOString() });
+});
 
 // Import API Route Modules
 // Auth
