@@ -6,6 +6,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "esbuild src/server.ts --bundle --platform=node --outfile=dist/server.cjs --external:express --external:@prisma/client --external:bcryptjs --external:jsonwebtoken --external:cors --external:cookie-parser --external:dotenv",
     "start": "node dist/server.cjs",
+    "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema=prisma/schema.prisma",
     "prisma:push": "prisma db push --schema=prisma/schema.prisma",
     "prisma:seed": "node scripts/seed.mjs"
