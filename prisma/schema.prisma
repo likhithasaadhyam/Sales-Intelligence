@@ -1,0 +1,428 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 1. users
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("SALES_EXECUTIVE") // SUPER_ADMIN, ADMIN_MANAGER, SALES_EXECUTIVE
+  status       String   @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile             EmployeeProfile?
+  managedTeams        Team[]                @relation("TeamManager")
+  salesTargets        SalesTarget[]
+  createdTargets      SalesTarget[]         @relation("TargetCreator")
+  assignedLeads       Lead[]                @relation("LeadAssignee")
+  createdLeads        Lead[]                @relation("LeadCreator")
+  calls               CallLog[]
+  followUps           FollowUp[]
+  meetings            Meeting[]
+  sales               Sale[]
+  recordedPayments    PaymentTransaction[]  @relation("PaymentRecorder")
+  verifiedPayments    PaymentTransaction[]  @relation("PaymentVerifier")
+  dailyReports        DailyWorkReport[]
+  reviewedReports     DailyWorkReport[]     @relation("ReportReviewer")
+  notifications       Notification[]
+  auditLogs           AuditLog[]
+  assignedTransfers   LeadAssignment[]      @relation("NewAssignee")
+  previousTransfers   LeadAssignment[]      @relation("PrevAssignee")
+  performedTransfers  LeadAssignment[]      @relation("TransferActor")
+  reportApprovals     ReportApproval[]
+  processedRefunds    Refund[]
+}
+
+// 2. roles
+model SystemRole {
+  id          String   @id @default(uuid())
+  code        String   @unique // SUPER_ADMIN, ADMIN_MANAGER, SALES_EXECUTIVE
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+}
+
+// 3. teams
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  department  String   @default("Sales")
+  leaderId    String?
+  leader      User?    @relation("TeamManager", fields: [leaderId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members      EmployeeProfile[]
+  salesTargets SalesTarget[]
+}
+
+// 4. employee_profiles
+model EmployeeProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode  String    @unique
+  name          String
+  phone         String?
+  teamId        String?
+  team          Team?     @relation(fields: [teamId], references: [id])
+  territory     String?
+  joiningDate   DateTime  @default(now())
+  status        String    @default("ACTIVE") // ACTIVE, ON_LEAVE, RESIGNED
+  reportingToId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// 5. sales_targets
+model SalesTarget {
+  id                     String    @id @default(uuid())
+  employeeId             String?
+  employee               User?     @relation(fields: [employeeId], references: [id])
+  teamId                 String?
+  team                   Team?     @relation(fields: [teamId], references: [id])
+  periodType             String    // DAILY, WEEKLY, MONTHLY
+  targetCalls            Int       @default(0)
+  targetLeads            Int       @default(0)
+  targetFollowUps        Int       @default(0)
+  targetPaidClients      Int       @default(0)
+  targetSalesValuePaise  BigInt    @default(0)
+  targetCollectionsPaise BigInt    @default(0)
+  package25kCount        Int       @default(0)
+  package35kCount        Int       @default(0)
+  package45kCount        Int       @default(0)
+  startDate              DateTime
+  endDate                DateTime
+  createdById            String
+  createdBy              User      @relation("TargetCreator", fields: [createdById], references: [id])
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}
+
+// 6. leads
+model Lead {
+  id                    String    @id @default(uuid())
+  leadNumber            String    @unique
+  businessName          String
+  contactPerson         String
+  phone                 String
+  email                 String?
+  businessCategory      String?
+  city                  String?
+  state                 String?
+  source                String    // INBOUND, WEBSITE, SOCIAL, REFERRAL, COLD_CALL, CAMPAIGN
+  assignedToId          String
+  assignedTo            User      @relation("LeadAssignee", fields: [assignedToId], references: [id])
+  createdById           String
+  createdBy             User      @relation("LeadCreator", fields: [createdById], references: [id])
+  estimatedDealValuePaise BigInt  @default(0)
+  packageInterested     String?
+  temperature           String    @default("WARM") // HOT, WARM, COLD
+  status                String    @default("NEW")  // NEW, NOT_CONTACTED, CONTACTED, INTERESTED, QUALIFIED, MEETING_SCHEDULED, PROPOSAL_SENT, NEGOTIATION, CONVERTED, LOST, NOT_INTERESTED, FOLLOW_UP_REQUIRED
+  notes                 String?
+  lastContactDate       DateTime?
+  nextFollowUpDate      DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  calls                 CallLog[]
+  followUps             FollowUp[]
+  meetings              Meeting[]
+  sales                 Sale[]
+  assignments           LeadAssignment[]
+}
+
+// 7. lead_assignments
+model LeadAssignment {
+  id                 String   @id @default(uuid())
+  leadId             String
+  lead               Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  previousEmployeeId String?
+  previousEmployee   User?    @relation("PrevAssignee", fields: [previousEmployeeId], references: [id])
+  newEmployeeId      String
+  newEmployee        User     @relation("NewAssignee", fields: [newEmployeeId], references: [id])
+  assignedById       String
+  assignedBy         User     @relation("TransferActor", fields: [assignedById], references: [id])
+  reason             String?
+  transferredAt      DateTime @default(now())
+}
+
+// 8. call_logs
+model CallLog {
+  id               String    @id @default(uuid())
+  callNumber       String    @unique
+  leadId           String
+  lead             Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  employeeId       String
+  employee         User      @relation(fields: [employeeId], references: [id])
+  callDateTime     DateTime  @default(now())
+  callDirection    String    @default("OUTBOUND") // OUTBOUND, INBOUND
+  callStatus       String    // CONNECTED, NOT_ANSWERED, BUSY, WRONG_NUMBER
+  durationSeconds  Int       @default(0)
+  outcome          String    // INTERESTED, NOT_INTERESTED, CALLBACK_REQUESTED, NO_ANSWER, BUSY, WRONG_NUMBER, MEETING_SCHEDULED, QUALIFIED, CONVERTED
+  followUpRequired Boolean   @default(false)
+  nextFollowUpDate DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+}
+
+// 9. follow_ups
+model FollowUp {
+  id           String    @id @default(uuid())
+  leadId       String
+  lead         Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  employeeId   String
+  employee     User      @relation(fields: [employeeId], references: [id])
+  scheduledAt  DateTime
+  completedAt  DateTime?
+  status       String    @default("PENDING") // PENDING, COMPLETED, OVERDUE, CANCELLED
+  outcome      String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// 10. meetings
+model Meeting {
+  id          String    @id @default(uuid())
+  leadId      String
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  employeeId  String
+  employee    User      @relation(fields: [employeeId], references: [id])
+  title       String
+  scheduledAt DateTime
+  completedAt DateTime?
+  status      String    @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED, RESCHEDULED
+  agenda      String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+}
+
+// 11. sales
+model Sale {
+  id                     String    @id @default(uuid())
+  saleNumber             String    @unique
+  leadId                 String?
+  lead                   Lead?     @relation(fields: [leadId], references: [id])
+  clientId               String
+  client                 Client    @relation(fields: [clientId], references: [id])
+  employeeId             String
+  employee               User      @relation(fields: [employeeId], references: [id])
+  packageName            String
+  saleDate               DateTime  @default(now())
+  totalContractValuePaise BigInt
+  discountPaise          BigInt    @default(0)
+  finalDealValuePaise    BigInt
+  paymentStatus          String    @default("PENDING") // PENDING, PARTIALLY_PAID, PAID, OVERDUE, REFUNDED
+  nextPaymentDueDate     DateTime?
+  invoiceNumber          String?
+  notes                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  payments               PaymentTransaction[]
+  refunds                Refund[]
+}
+
+// 12. clients
+model Client {
+  id            String    @id @default(uuid())
+  clientNumber  String    @unique
+  businessName  String
+  contactPerson String
+  phone         String
+  email         String?
+  city          String?
+  state         String?
+  address       String?
+  gstNumber     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sales         Sale[]
+  payments      PaymentTransaction[]
+}
+
+// 13. packages
+model Package {
+  id          String   @id @default(uuid())
+  name        String   // e.g. "Mentneo Growth ₹25,000", "Mentneo Scale ₹35,000", "Mentneo Enterprise ₹45,000"
+  code        String   @unique
+  pricePaise  BigInt
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 14. payment_transactions
+model PaymentTransaction {
+  id                   String    @id @default(uuid())
+  transactionNumber    String    @unique
+  saleId               String
+  sale                 Sale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  clientId             String
+  client               Client    @relation(fields: [clientId], references: [id])
+  recordedById         String
+  recordedBy           User      @relation("PaymentRecorder", fields: [recordedById], references: [id])
+  verifiedById         String?
+  verifiedBy           User?     @relation("PaymentVerifier", fields: [verifiedById], references: [id])
+  paymentDate          DateTime  @default(now())
+  amountPaise          BigInt
+  paymentMethod        String    // UPI, BANK_TRANSFER, CASH, PAYMENT_GATEWAY
+  transactionReference String
+  verificationStatus   String    @default("PENDING") // PENDING, VERIFIED, REJECTED
+  verificationNotes    String?
+  verifiedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  refunds              Refund[]
+}
+
+// 15. refunds
+model Refund {
+  id                   String             @id @default(uuid())
+  refundNumber         String             @unique
+  saleId               String
+  sale                 Sale               @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  paymentTransactionId String?
+  paymentTransaction   PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+  amountPaise          BigInt
+  reason               String
+  processedById        String
+  processedBy          User               @relation(fields: [processedById], references: [id])
+  verificationStatus   String             @default("VERIFIED") // PENDING, VERIFIED, REJECTED
+  processedAt          DateTime           @default(now())
+  createdAt            DateTime           @default(now())
+}
+
+// 16. daily_work_reports
+model DailyWorkReport {
+  id                       String    @id @default(uuid())
+  employeeId               String
+  employee                 User      @relation(fields: [employeeId], references: [id])
+  reportingDate            DateTime
+  status                   String    @default("DRAFT") // DRAFT, SUBMITTED, APPROVED, REJECTED
+  // Call Activity
+  callsMade                Int       @default(0)
+  connectedCalls           Int       @default(0)
+  unansweredCalls          Int       @default(0)
+  interestedProspects      Int       @default(0)
+  followUpCalls            Int       @default(0)
+  whatsappFollowups        Int       @default(0)
+  meetingsScheduled        Int       @default(0)
+  // Lead Activity
+  newLeadsReceived         Int       @default(0)
+  newLeadsAdded            Int       @default(0)
+  leadsContacted           Int       @default(0)
+  qualifiedLeads           Int       @default(0)
+  hotLeads                 Int       @default(0)
+  warmLeads                Int       @default(0)
+  coldLeads                Int       @default(0)
+  followupsCompleted       Int       @default(0)
+  // Sales Activity
+  proposalsSent            Int       @default(0)
+  meetingsCompleted        Int       @default(0)
+  negotiationsInProgress   Int       @default(0)
+  dealsClosed              Int       @default(0)
+  newClientsAcquired       Int       @default(0)
+  packageSold              String?
+  dealValuePaise           BigInt    @default(0)
+  // Financial Activity
+  revenueGeneratedPaise    BigInt    @default(0)
+  amountCollectedPaise     BigInt    @default(0)
+  amountUpiPaise           BigInt    @default(0)
+  amountBankTransferPaise  BigInt    @default(0)
+  amountCashPaise          BigInt    @default(0)
+  amountGatewayPaise       BigInt    @default(0)
+  pendingAmountPaise       BigInt    @default(0)
+  refundsPaise             BigInt    @default(0)
+  // Work Summary
+  mainActivities           String?
+  clientConversations      String?
+  challengesFaced          String?
+  reasonMissedTargets      String?
+  tomorrowPlan             String?
+  additionalNotes          String?
+  // Review info
+  reviewerFeedback         String?
+  reviewedById             String?
+  reviewedBy               User?     @relation("ReportReviewer", fields: [reviewedById], references: [id])
+  submittedAt              DateTime?
+  reviewedAt               DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  activities               DailyReportActivity[]
+  approvals                ReportApproval[]
+
+  @@unique([employeeId, reportingDate])
+}
+
+// 17. daily_report_activities
+model DailyReportActivity {
+  id           String          @id @default(uuid())
+  reportId     String
+  report       DailyWorkReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  activityType String          // CALL, LEAD, SALE, PAYMENT, MEETING
+  entityId     String?
+  description  String
+  createdAt    DateTime        @default(now())
+}
+
+// 18. notifications
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // LEAD_ASSIGNED, FOLLOW_UP_DUE, REPORT_DEADLINE, REPORT_REJECTED, PAYMENT_VERIFIED, TARGET_ASSIGNED, ADMIN_ALERT
+  read      Boolean  @default(false)
+  linkUrl   String?
+  createdAt DateTime @default(now())
+}
+
+// 19. audit_logs
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id])
+  action      String   // CREATE, UPDATE, DELETE, VERIFY, REJECT, TRANSFER, APPROVE, LOGIN
+  entityType  String   // USER, LEAD, SALE, PAYMENT, TARGET, REPORT, PACKAGE, SETTING
+  entityId    String?
+  detailsJson String?  // JSON string containing before/after diff or metadata
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+}
+
+// 20. report_approvals
+model ReportApproval {
+  id         String          @id @default(uuid())
+  reportId   String
+  report     DailyWorkReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reviewerId String
+  reviewer   User            @relation(fields: [reviewerId], references: [id])
+  status     String          // APPROVED, REJECTED, CHANGES_REQUESTED
+  feedback   String?
+  reviewedAt DateTime        @default(now())
+}
+
+// General System Settings
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
